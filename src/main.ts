@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 14:37:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 10:30:44
+ * @LastEditTime: 2022-10-08 14:33:39
  * @Description: 主入口
  */
 import { NestFactory } from '@nestjs/core';
@@ -15,10 +15,8 @@ import { ValidationPipe } from '@/common/pipes/validation.pipe';
 import { RouterMiddleware } from './common/middleware/router.middleware';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
-  });
-
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.enableCors();
   app.use(RouterMiddleware(app));
   // 配置静态资源目录
   app.useStaticAssets('static');

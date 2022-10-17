@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-04 17:59:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 19:58:16
+ * @LastEditTime: 2022-10-08 12:08:24
  * @Description: 标签控制层
  */
 import {
@@ -14,7 +14,7 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { TagService } from '@/modules/tag/tag.service';
 import { CreateTagDto } from '@/modules/tag/dto/create-tag.dto';
 import { UpdateTagDto } from '@/modules/tag/dto/update-tag.dto';

@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-06 16:38:52
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 11:44:33
+ * @LastEditTime: 2022-10-11 17:04:39
  * @Description: 路由中间件
  */
 
@@ -13,10 +13,10 @@ import { responseMessage, ResponseStatus } from '@/contacts/response-message';
 
 export function RouterMiddleware(app: INestApplication) {
   return (req: Request, res: Response, next: NextFunction) => {
-    // 1、放行OPTIONS请求和swagger请求
+    // 1、放行OPTIONS请求和所有不是SWAGGER_ENDPOINT_PREFIX值开头的请求
     if (
       req.method === 'OPTIONS' ||
-      req.url.indexOf(process.env.SWAGGER_SETUP_PATH) !== -1
+      req.url.indexOf(process.env.SWAGGER_ENDPOINT_PREFIX) === -1
     ) {
       return next();
     }

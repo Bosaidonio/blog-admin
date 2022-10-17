@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-07 21:33:44
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 21:33:46
+ * @LastEditTime: 2022-10-08 09:17:57
  * @Description: Do not edit
  */
 module.exports = {
@@ -53,6 +53,30 @@ module.exports = {
     {
       value: ':construction_worker: ci',
       name: '👷 ci:       CI related changes',
+    },
+    {
+      value: ':arrow_down: down',
+      name: '⬇️  down:     降级依赖',
+    },
+    {
+      value: ':pushpin: pin',
+      name: '📌 pin:      将依赖项固定到特定版本',
+    },
+    {
+      value: ':art: art',
+      name: '🎨 art:      改进代码的结构/格式',
+    },
+    {
+      value: ':fire: remove',
+      name: '🔥 remove:   删除代码或文件',
+    },
+    {
+      value: ':ambulance: hotfix',
+      name: '🚑️ hotfix:   修复紧急bug',
+    },
+    {
+      value: ':building_construction: hotfix',
+      name: '🏗️ hotfix:   进行架构更改',
     },
   ],
   messages: {

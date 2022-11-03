@@ -1,23 +1,27 @@
 /*
  * @Date: 2022-10-04 17:59:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 20:04:18
+ * @LastEditTime: 2022-11-03 20:10:38
  * @Description: 标签服务层
  */
 import { HttpException, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { QueryTagDto } from '@/modules/tag/dto/query-tag.dto';
 import { CreateTagDto } from '@/modules/tag/dto/create-tag.dto';
 import { UpdateTagDto } from '@/modules/tag/dto/update-tag.dto';
 import { Tag, TagDocument } from '@/modules/tag/entities/tag.entity';
-import { InjectModel } from '@nestjs/mongoose';
-import { deleteObjEmptyValue, ToLine } from '@/utils';
-import { Model } from 'mongoose';
 import { ResponseStatus } from '@/contacts/response-message';
 import { ArticleMessage, TagMessage } from '@/contacts/business-message';
-import { QueryTagDto } from './dto/query-tag.dto';
+import { deleteObjEmptyValue, ToLine } from '@/utils';
+import { Article, ArticleDocument } from '../article/entities/article.entity';
 
 @Injectable()
 export class TagService {
-  constructor(@InjectModel(Tag.name) private tagModel: Model<TagDocument>) {}
+  constructor(
+    @InjectModel(Tag.name) private tagModel: Model<TagDocument>,
+    @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,
+  ) {}
 
   /**
    * @description: 创建标签
@@ -113,8 +117,6 @@ export class TagService {
    */
   async updateTag(id: string, updateTagDto: UpdateTagDto) {
     try {
-      console.log(id, updateTagDto);
-
       await this.tagModel.findByIdAndUpdate(id, {
         ...ToLine(updateTagDto),
       });
@@ -140,12 +142,19 @@ export class TagService {
    */
   async deleteTagById(id: string) {
     try {
+      // 判断标签是否被文章引用
+      const findArticle = await this.articleModel.findOne({
+        tags: id,
+      });
+      if (findArticle) {
+        throw new Error(TagMessage.TAG_IS_REFERENCED);
+      }
       const tag = await this.tagModel.findByIdAndDelete(id);
       if (!tag) {
-        throw new Error(TagMessage.TAG_ALREADY_EXISTS);
+        throw new Error(TagMessage.TAG_NOT_FOUND);
       }
       return {
-        data: tag,
+        data: null,
         message: TagMessage.TAG_DELETE_SUCCESS,
       };
     } catch (error) {

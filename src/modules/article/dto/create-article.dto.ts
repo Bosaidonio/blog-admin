@@ -1,18 +1,11 @@
 /*
  * @Date: 2022-10-04 18:00:39
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 12:15:16
+ * @LastEditTime: 2022-11-03 18:14:49
  * @Description: 新增文章传输对象
  */
 import { ApiOperation, ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsDate,
-  IsInt,
-  IsBoolean,
-  IsArray,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsString, IsDate, IsInt, IsBoolean, IsArray, IsNotEmpty } from 'class-validator';
 
 export class CreateArticleDto {
   @IsString()

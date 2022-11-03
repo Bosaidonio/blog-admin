@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 22:33:52
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-05 21:10:43
+ * @LastEditTime: 2022-11-01 12:22:05
  * @Description: 文章实体
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';

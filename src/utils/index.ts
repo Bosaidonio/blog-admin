@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-04 10:47:49
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 14:57:12
+ * @LastEditTime: 2022-11-03 14:31:02
  * @Description: 常用工具函数
  */
 
@@ -149,7 +149,10 @@ export const stringToNumberObject = (obj: any, transformKeys: string[]) => {
  * @description: 将数组中的对象的值转换成数字
  * @param {any} arr
  * @param {string} transformKeys
- * @return {*}
+ * @return {*}、
+ * @example
+ * stringToNumberArray([{a: '1', b: '2'}, {a: '3', b: '4'}], ['a'])
+ * 转换结果 => [{a: 1, b: '2'}, {a: 3, b: '4'}]
  */
 export const stringToNumberArray = (arr: any[], transformKeys: string[]) => {
   return arr.map((item) => {
@@ -168,6 +171,9 @@ export const stringToNumberArray = (arr: any[], transformKeys: string[]) => {
  * @param {Record<string, any>} obj
  * @param {Record<string, any>} values
  * @return {Record<string, any>}
+ * @example
+ * deleteEmptyValue({a: 1, b: '', c: null, d: undefined, e: 0})
+ * 转换结果 => {a: 1, e: 0}
  */
 export const deleteObjEmptyValue = (
   obj: Record<string, any>,
@@ -180,4 +186,112 @@ export const deleteObjEmptyValue = (
     }
   });
   return newObj;
+};
+/**
+ * @description: 将嵌套树结构数据转换成一维数组
+ * @param {any} tree
+ * @return {*}
+ * @example
+ * const tree = [ { id: 1, name: '1', children: [ { id: 2, name: '2' } ] } ]
+ * 调用方法 => treeToArray(tree)
+ * 返回结果 => [ { id: 1, name: '1' }, { id: 2, name: '2' } ]
+ */
+export const flattenTree = (tree: any[]) => {
+  return tree.reduce((acc, val) => {
+    acc.push(val);
+    if (val.children) {
+      acc.push(...flattenTree(val.children));
+      delete val.children;
+    }
+    return acc;
+  }, []);
+};
+
+/**
+ * @description: 将扁平化数组转换成树形结构
+ * @param {any[]} data
+ * @param {string} id
+ * @param {string} pid
+ * @return {*}
+ * @example
+ * const data = [ { id: 1,  pid: 0 }, { id: 2, pid: 1 }, { id: 3, pid: 2 } ]
+ * 调用方法 => treeToArray(data, 'id', 'pid')
+ * isDeepTree: true 转换结果 => [{id: 1, children: [{id: 2, pid: 1, children:[{ id: 3, pid: 2}]}] }]
+ */
+export const toTree = (data: any[], id = 'id', pid = 'pid') => {
+  const result: any[] = data.map((item) => JSON.parse(JSON.stringify(item)));
+  // 判断是否传入id和pid
+  if (!id || !pid) {
+    return result;
+  }
+  const mapData: any = {};
+  result.forEach((item) => {
+    mapData[item[id]] = item;
+  });
+  return result.reduce((acc, cur) => {
+    const { [pid]: parentId } = cur;
+    if (parentId) {
+      const parent = mapData[cur[pid]];
+      if (parent) {
+        parent.children = [...(parent.children || []), cur];
+      } else {
+        acc.push(cur);
+      }
+    } else {
+      acc.push(cur);
+    }
+    return acc;
+  }, []);
+};
+/**
+ * @description: 传入一个节点id，返回该节点的最顶层父级节点
+ * @param {any} data
+ * @param {string} id
+ * @param {string} pid
+ * @return {*}
+ * @example
+ * const data = [ { id: 1, pid: 0 }, { id: 2, pid: 1 }, { id: 3, pid: 2 } ]
+ * 调用方法 => getTopParent(data, 3)
+ * 返回结果 => { id: 1, pid: 0 }
+ */
+export const getTopParent = (data: any[], id = 'id', pid = 'pid') => {
+  const mapData = {};
+  data.forEach((item) => {
+    mapData[item[id]] = item;
+  });
+  return function diff(currentNodeId) {
+    const currentNode = mapData[currentNodeId];
+    if (currentNode && currentNode[pid]) {
+      return diff(currentNode[pid]);
+    } else {
+      return currentNode;
+    }
+  };
+};
+/**
+ * @description: 深层树结构转换一维数结构
+ * @param {any} data
+ * @param {string} id 主键 每个节点的唯一标识
+ * @param {string} pid 父级主键 该主键将用于查找父级节点
+ * @param {string} rootNodeIdName 根节点id的字段名
+ * @return {*}
+ * @example
+ * const data = [ { id: 1, pid: 0}, { id: 2, pid: 1}, { id: 3, pid: 2 } ]
+ * 调用方法 => treeToTwoFlatTree(data, 'id', 'pid')
+ * 返回结果 => [ { id: 1, pid: 0, children: [{ id: 2, pid: 1 }, { id: 3, pid: 2 }] } ]
+ */
+export const treeToTwoFlatTree = (
+  data: any[],
+  id = 'id',
+  pid = 'pid',
+  rootNodeIdName = 'rootNodeId',
+) => {
+  const transformData = data.map((item) => {
+    const topParent = getTopParent(data, id, pid)(item[id]);
+    return {
+      ...item,
+      [rootNodeIdName]: item[pid] ? topParent[id] : null,
+    };
+  });
+  return toTree(transformData, id, rootNodeIdName);
 };

@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-04 11:02:52
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 19:55:39
+ * @LastEditTime: 2022-10-22 17:07:09
  * @Description: 请求拦截器
  */
 import { ResponseStatus } from '@/contacts/response-message';
@@ -70,7 +70,6 @@ export class TransformInterceptor<T> implements NestInterceptor {
                     ...rest,
                   }
                 : parseData;
-            console.log(parseResult);
 
             return {
               data: parseResult,

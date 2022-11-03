@@ -1,26 +1,26 @@
 /*
  * @Date: 2022-09-25 14:47:55
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 19:44:32
+ * @LastEditTime: 2022-11-03 19:49:44
  * @Description: 文章服务实现
  */
 import { HttpException, Injectable } from '@nestjs/common';
-import {
-  Article,
-  ArticleDocument,
-} from '@/modules/article/entities/article.entity';
-import { CreateArticleDto } from '@/modules/article/dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
-import { deleteObjEmptyValue, ToLine } from '@/utils';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Article, ArticleDocument } from '@/modules/article/entities/article.entity';
+import { CommentDocument, Comment } from '@/modules/comment/entities/comment.entity';
+import { CreateArticleDto } from '@/modules/article/dto/create-article.dto';
+import { UpdateArticleDto } from '@/modules/article/dto/update-article.dto';
 import { ResponseStatus } from '@/contacts/response-message';
 import { ArticleMessage } from '@/contacts/business-message';
-import { QueryArticleDto } from './dto/query-article.dto';
+import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
+import { deleteObjEmptyValue, ToLine, toTree, treeToTwoFlatTree } from '@/utils';
+
 @Injectable()
 export class ArticleService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
   ) {}
 
   /**
@@ -30,16 +30,7 @@ export class ArticleService {
    */
   async createArticle(createArticleDto: CreateArticleDto) {
     try {
-      // 先查询文章是否存在
-      const findArticle = await this.articleModel.findOne({
-        title: createArticleDto.title,
-      });
-      if (findArticle) {
-        throw new Error(ArticleMessage.ARTICLE_ALREADY_EXISTS);
-      }
-      const createArticle = await this.articleModel.create(
-        ToLine(createArticleDto),
-      );
+      const createArticle = await this.articleModel.create(ToLine(createArticleDto));
       return {
         data: createArticle,
         message: ArticleMessage.ARTICLE_CREATE_SUCCESS,
@@ -63,15 +54,17 @@ export class ArticleService {
   async updateArticle(id: string, updateArticleDto: UpdateArticleDto) {
     // 根据id修改文章信息
     try {
+      //先查询文章是否存在
+      const findArticle = await this.articleModel.findById(id);
+      if (!findArticle) {
+        throw new Error(ArticleMessage.ARTICLE_NOT_FOUND);
+      }
       await this.articleModel.findByIdAndUpdate(id, {
         ...ToLine(updateArticleDto),
       });
-      const article = await this.articleModel.findById(id).populate({
-        path: 'tags',
-      });
       return {
         message: ArticleMessage.ARTICLE_UPDATE_SUCCESS,
-        data: article,
+        data: null,
       };
     } catch (error) {
       throw new HttpException(
@@ -89,45 +82,21 @@ export class ArticleService {
    */
   async findArticleList(queryArticleDto: QueryArticleDto) {
     try {
-      const { pageNow, pageSize, title, status } = queryArticleDto;
-      // 使用聚合查询关联tags表查询,只返回tags表的tag_name字段
-      // const articles = await this.articleModel.aggregate([
-      //   {
-      //     $lookup: {
-      //       from: 'tags',
-      //       localField: 'tags',
-      //       foreignField: '_id',
-      //       as: 'tags',
-      //     },
-      //   },
-      //   {
-      //     $project: {
-      //       title: 1,
-      //       simple_desc: 1,
-      //       article_content: 1,
-      //       tags: {
-      //         tag_name: 1,
-      //       },
-      //     },
-      //   },
-      // ]);
+      const { pageNow, pageSize, ...rest } = queryArticleDto;
       // 使用populate查询关联tags表查询,只返回tags表的tag_name字段
-      const findParams = deleteObjEmptyValue(
-        { status, title: { $regex: title } },
-        { title, status },
-      );
-
+      const findParams = deleteObjEmptyValue({ status: rest.status, title: { $regex: rest.title } }, rest);
       const articles = await this.articleModel
         .find(findParams)
         .skip((pageNow - 1) * pageSize)
         .limit(pageSize)
         .sort({ create_time: -1 })
         .populate({ path: 'tags' });
-
+      // 所有文章id
+      const articleIds = articles.map((item) => item._id);
+      const articleList = await this.findArticleComments(articles, articleIds);
       const total = await this.articleModel.countDocuments(findParams);
-
       return {
-        data: articles,
+        data: articleList,
         message: ArticleMessage.ARTICLE_GET_LIST_SUCCESS,
         pageNow,
         pageSize,
@@ -144,20 +113,57 @@ export class ArticleService {
     }
   }
   /**
+   * @description: 根据文章id查询文章评论
+   * @param {any[]} articles
+   * @param {string[]} articleIds
+   * @return {any[]}
+   */
+  async findArticleComments(articles, articleIds) {
+    // 根据文章id查询出和id有关联的所有评论
+    const comments = await this.commentModel.find({
+      article_id: { $in: articleIds },
+    });
+    // 每条子评论中的reply_comment_id是父评论的_id 通过这个关系将子评论和父评论关联起来，形成树状结构
+    const commentTree = toTree(comments, '_id', 'reply_comment_id');
+    // const commentTree = treeToTwoFlatTree(
+    //   JSON.parse(JSON.stringify(comments)),
+    //   '_id',
+    //   'reply_comment_id',
+    //   'root_comment_id',
+    // );
+
+    // 将commentTree按照article_id分组
+    const commentGroup = commentTree.reduce((prev, cur) => {
+      const articleId = cur.article_id.toString();
+      if (!prev[articleId]) {
+        prev[articleId] = [];
+      }
+      prev[articleId].push(cur);
+      return prev;
+    }, {});
+    const articleList = articles.map((item) => {
+      const articleId = item._id;
+      return {
+        ...item.toObject(),
+        commentList: commentGroup[articleId] || [],
+      };
+    });
+    return articleList;
+  }
+  /**
    * @description: 根据id获取文章详情
    * @param {string} id
    * @return {any}
    */
   async findArticleById(id: string) {
     try {
-      const article = await this.articleModel.findById(id).populate({
-        path: 'tags',
-      });
-      if (!article) {
+      const findArticle = await this.articleModel.findById(id).populate({ path: 'tags' });
+      if (!findArticle) {
         throw new Error(ArticleMessage.ARTICLE_NOT_FOUND);
       }
+      const articleDesc = await this.findArticleComments([findArticle], [id]);
       return {
-        data: article,
+        data: articleDesc[0],
         message: ArticleMessage.ARTICLE_GET_DETAIL_SUCCESS,
       };
     } catch (error) {
@@ -181,8 +187,10 @@ export class ArticleService {
       if (!article) {
         throw new Error(ArticleMessage.ARTICLE_NOT_FOUND);
       }
+      // 删除文章的同时删除文章下的评论
+      await this.commentModel.deleteMany({ article_id: id });
       return {
-        data: article,
+        data: null,
         message: ArticleMessage.ARTICLE_DELETE_SUCCESS,
       };
     } catch (error) {

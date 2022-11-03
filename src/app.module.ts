@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 14:37:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-06 17:14:54
+ * @LastEditTime: 2022-10-31 17:24:28
  * @Description: Do not edit
  */
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
@@ -12,7 +12,7 @@ import { getEnvFilePath } from '@/utils/env-config-path';
 import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
 import { TagModule } from '@/modules/tag/tag.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RouterMiddleware } from './common/middleware/router.middleware';
+import { CommentModule } from './modules/comment/comment.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -49,6 +49,7 @@ import { RouterMiddleware } from './common/middleware/router.middleware';
     ),
     ArticleModule,
     TagModule,
+    CommentModule,
   ],
   controllers: [],
   providers: [],

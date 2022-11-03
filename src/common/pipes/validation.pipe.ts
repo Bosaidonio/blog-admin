@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-05 10:50:05
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 12:10:49
+ * @LastEditTime: 2022-11-03 09:59:09
  * @Description: 请求参数验证管道
  */
 import {
@@ -19,9 +19,12 @@ import { validate } from 'class-validator';
 export class ValidationPipe implements PipeTransform<any> {
   async transform(value: any, metadata: ArgumentMetadata) {
     const { metatype } = metadata;
+
     if (!metatype || this.toValidate(metatype)) {
       return value;
     }
+    // metatype是一个类，plainToClass将value转换为metatype的实例
+    // 例如：plainToClass(QueryArticleDto, value) => new QueryArticleDto(value) => {pageNow: 1, pageSize: 10, title: '', status: 1}
     const object = plainToClass(metatype, value);
     const errors = await validate(object, {
       stopAtFirstError: true,

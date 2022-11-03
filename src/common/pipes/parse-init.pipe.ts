@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-07 12:33:38
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 13:16:35
+ * @LastEditTime: 2022-11-03 09:19:13
  * @Description: 实现一个解析query参数的管道
  */
 
@@ -9,9 +9,7 @@ import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
 import { stringToNumberObject } from '@/utils';
 import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
 
-export class ParseIntTransform<T> {
-  
-}
+export class ParseIntTransform<T> {}
 @Injectable()
 export class ParseIntPipe implements PipeTransform {
   transformKeys: string[] = [];

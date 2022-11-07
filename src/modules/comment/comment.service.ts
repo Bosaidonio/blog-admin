@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-31 16:10:17
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 19:20:36
+ * @LastEditTime: 2022-11-07 12:59:10
  * @Description: Do not edit
  */
 import { HttpException, Injectable } from '@nestjs/common';
@@ -14,6 +14,7 @@ import { UpdateCommentDto, UpdateCommentParms } from '@/modules/comment/dto/upda
 import { ArticleMessage, CommentMessage } from '@/contacts/business-message';
 import { ResponseStatus } from '@/contacts/response-message';
 import { ToLine } from '@/utils';
+import { ThrowError } from '@/contacts/throw-error';
 
 @Injectable()
 export class CommentService {
@@ -44,13 +45,7 @@ export class CommentService {
         message: CommentMessage.COMMENT_CREATE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: CommentMessage.COMMENT_CREATE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(CommentMessage.COMMENT_CREATE_FAILED, error.message);
     }
   }
   /**
@@ -66,13 +61,7 @@ export class CommentService {
         message: CommentMessage.COMMENT_GET_LIST_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: CommentMessage.COMMENT_GET_LIST_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(CommentMessage.COMMENT_GET_LIST_FAILED, error.message);
     }
   }
   /**
@@ -115,13 +104,7 @@ export class CommentService {
         message: CommentMessage.COMMENT_UPDATE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: CommentMessage.COMMENT_UPDATE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(CommentMessage.COMMENT_UPDATE_FAILED, error.message);
     }
   }
   /**
@@ -147,13 +130,7 @@ export class CommentService {
         message: CommentMessage.COMMENT_DELETE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: CommentMessage.COMMENT_DELETE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(CommentMessage.COMMENT_DELETE_FAILED, error.message);
     }
   }
 }

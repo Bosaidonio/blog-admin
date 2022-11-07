@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-04 17:59:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-05 20:21:12
+ * @LastEditTime: 2022-11-06 13:59:18
  * @Description: 标签实体
  */
 import { parseTime } from '@/utils/date';

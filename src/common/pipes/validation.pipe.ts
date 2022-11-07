@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-05 10:50:05
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 09:59:09
+ * @LastEditTime: 2022-11-06 14:11:02
  * @Description: 请求参数验证管道
  */
 import {
@@ -35,10 +35,7 @@ export class ValidationPipe implements PipeTransform<any> {
         const { property, constraints } = err;
         errObj[property] = Object.values(constraints);
       });
-      throw new HttpException(
-        { message: 'Request data validation failed', error: errObj },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException({ message: 'Request data validation failed', error: errObj }, HttpStatus.BAD_REQUEST);
     } else {
       return value;
     }

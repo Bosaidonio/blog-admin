@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 22:33:52
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-01 12:22:05
+ * @LastEditTime: 2022-11-06 14:00:51
  * @Description: 文章实体
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -20,7 +20,7 @@ export class Article {
   article_content: string;
 
   @Prop()
-  author: string;
+  user_id: string;
 
   @Prop({ type: 'string', default: parseTime(new Date()) })
   create_time: string;

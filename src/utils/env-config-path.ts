@@ -1,3 +1,9 @@
+/*
+ * @Date: 2022-09-25 15:51:53
+ * @LastEditors: mario marioworker@163.com
+ * @LastEditTime: 2022-11-07 11:24:33
+ * @Description: Do not edit
+ */
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -17,16 +23,14 @@ type optionsType = {
 export function getEnvFilePath(options?: optionsType): string[] {
   const params = { dirPath: directory, prefix: 'src/config/env/', ...options };
   const results = [];
-
+  const runEnv = process.env.NODE_ENV;
   try {
     for (const dirContent of fs.readdirSync(params.dirPath)) {
       const dirContentPath = path.resolve(directory, dirContent);
       if (fs.statSync(dirContentPath).isFile()) {
-        if (dirContent.endsWith('.env')) {
+        if (dirContent.endsWith('.env') && dirContent.includes(runEnv)) {
           if (params.prefix) {
             results.push(`${params.prefix}${dirContent}`);
-          } else {
-            results.push(dirContent);
           }
         }
       }

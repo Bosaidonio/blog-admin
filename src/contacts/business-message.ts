@@ -1,10 +1,13 @@
 /*
  * @Date: 2022-10-06 16:06:13
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 20:08:10
+ * @LastEditTime: 2022-11-07 12:21:35
  * @Description: 错误信息
  */
-
+// 服务端错误
+export const ServiceMessage = {
+  INTERNAL_SERVER_ERROR: '服务器内部错误',
+};
 // 文章响应信息
 export const ArticleMessage = {
   ARTICLE_NOT_FOUND: '文章不存在',
@@ -49,4 +52,24 @@ export const CommentMessage = {
   COMMENT_GET_DETAIL_SUCCESS: '获取评论详情成功',
   COMMENT_GET_DETAIL_FAILED: '获取评论详情失败',
   COMMENT_ARTICLE_NOT_MATCH: '评论和文章不匹配',
+};
+// 用户响应信息
+export const UserMessage = {
+  USER_NOT_FOUND: '用户不存在',
+  USER_ALREADY_EXISTS: '用户已存在',
+  USER_DELETE_SUCCESS: '用户删除成功',
+  USER_UPDATE_SUCCESS: '用户信息更新成功',
+  USER_GET_LIST_SUCCESS: '获取用户列表成功',
+  USER_UPDATE_FAILED: '用户信息更新失败',
+  USER_DELETE_FAILED: '用户删除失败',
+  USER_GET_LIST_FAILED: '获取用户列表失败',
+  USER_GET_DETAIL_SUCCESS: '获取用户详情成功',
+  USER_GET_DETAIL_FAILED: '获取用户详情失败',
+  USER_LOGIN_SUCCESS: '用户登录成功',
+  USER_LOGIN_FAILED: '用户登录失败',
+  USER_LOGOUT_SUCCESS: '用户登出成功',
+  USER_LOGOUT_FAILED: '用户登出失败',
+  USER_REGISTER_SUCCESS: '用户注册成功',
+  USER_REGISTER_FAILED: '用户注册失败',
+  USER_PASSWORD_NOT_MATCH: '密码不匹配',
 };

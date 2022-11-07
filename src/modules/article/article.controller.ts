@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 14:47:47
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 18:16:31
+ * @LastEditTime: 2022-11-07 14:29:30
  * @Description: 文章控制器
  */
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
@@ -11,6 +11,7 @@ import { CreateArticleDto } from '@/modules/article/dto/create-article.dto';
 import { UpdateArticleDto } from '@/modules/article/dto/update-article.dto';
 import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
 import { ParseIntPipe } from '@/common/pipes/parse-init.pipe';
+import { ObjectIdPipe } from '@/common/pipes/object-id.pipe';
 @ApiTags('文章')
 @Controller('article')
 export class ArticleController {
@@ -33,19 +34,19 @@ export class ArticleController {
 
   @Patch('/update/:id')
   @ApiOperation({ summary: '更新文章' })
-  updateArticle(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
+  updateArticle(@Param('id', ObjectIdPipe) id: string, @Body() updateArticleDto: UpdateArticleDto) {
     return this.ArticleService.updateArticle(id, updateArticleDto);
   }
 
   @Delete('/delete/:id')
   @ApiOperation({ summary: '删除指定文章' })
-  deleteArticleById(@Param('id') id: string) {
+  deleteArticleById(@Param('id', ObjectIdPipe) id: string) {
     return this.ArticleService.deleteArticleById(id);
   }
 
   @Get('/detail/:id')
   @ApiOperation({ summary: '获取文章详情' })
-  findArticleById(@Param('id') id: string) {
+  findArticleById(@Param('id', ObjectIdPipe) id: string) {
     return this.ArticleService.findArticleById(id);
   }
 }

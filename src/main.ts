@@ -1,19 +1,20 @@
 /*
  * @Date: 2022-09-25 14:37:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-08 14:33:39
+ * @LastEditTime: 2022-11-07 11:54:53
  * @Description: 主入口
  */
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as shell from 'shelljs';
 import { AppModule } from '@/app.module';
 import { HttpExceptionFilter } from '@/common/filters/http-exception.filter';
 import { TransformInterceptor } from '@/common/interceptors/transform-interceptor';
 import { startLogger } from '@/utils/start-logger';
 import { ValidationPipe } from '@/common/pipes/validation.pipe';
 import { RouterMiddleware } from './common/middleware/router.middleware';
-
+import { checkServiceEnv } from '@/utils/check-service-env';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors();
@@ -39,4 +40,11 @@ async function bootstrap() {
   await app.listen(process.env.SERVER_LISTEN_PORT);
   startLogger();
 }
-bootstrap();
+(async () => {
+  const result = await checkServiceEnv();
+  if (result) {
+    bootstrap();
+  } else {
+    shell.exit(1);
+  }
+})();

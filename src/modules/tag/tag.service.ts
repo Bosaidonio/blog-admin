@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-04 17:59:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 20:10:38
+ * @LastEditTime: 2022-11-07 13:00:56
  * @Description: 标签服务层
  */
 import { HttpException, Injectable } from '@nestjs/common';
@@ -15,6 +15,7 @@ import { ResponseStatus } from '@/contacts/response-message';
 import { ArticleMessage, TagMessage } from '@/contacts/business-message';
 import { deleteObjEmptyValue, ToLine } from '@/utils';
 import { Article, ArticleDocument } from '../article/entities/article.entity';
+import { ThrowError } from '@/contacts/throw-error';
 
 @Injectable()
 export class TagService {
@@ -36,19 +37,13 @@ export class TagService {
       if (findTag) {
         throw new Error(TagMessage.TAG_ALREADY_EXISTS);
       }
-      const createTag = await this.tagModel.create(ToLine(createTagDto));
+      await this.tagModel.create(ToLine(createTagDto));
       return {
-        data: createTag,
+        data: null,
         message: TagMessage.TAG_CREATE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: TagMessage.TAG_CREATE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(TagMessage.TAG_CREATE_FAILED, error.message);
     }
   }
   /**
@@ -78,13 +73,7 @@ export class TagService {
         message: TagMessage.TAG_GET_LIST_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: TagMessage.TAG_GET_LIST_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(TagMessage.TAG_GET_LIST_FAILED, error.message);
     }
   }
   /**
@@ -100,13 +89,7 @@ export class TagService {
         message: TagMessage.TAG_GET_DETAIL_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: TagMessage.TAG_GET_DETAIL_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(TagMessage.TAG_GET_DETAIL_FAILED, error.message);
     }
   }
   /**
@@ -120,19 +103,13 @@ export class TagService {
       await this.tagModel.findByIdAndUpdate(id, {
         ...ToLine(updateTagDto),
       });
-      const tag = await this.tagModel.findById(id);
+      await this.tagModel.findById(id);
       return {
-        data: tag,
+        data: null,
         message: TagMessage.TAG_UPDATE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: TagMessage.TAG_UPDATE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(TagMessage.TAG_UPDATE_FAILED, error.message);
     }
   }
   /**
@@ -158,13 +135,7 @@ export class TagService {
         message: TagMessage.TAG_DELETE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: TagMessage.TAG_DELETE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(TagMessage.TAG_DELETE_FAILED, error.message);
     }
   }
 }

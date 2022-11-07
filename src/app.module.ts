@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 14:37:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-31 17:24:28
+ * @LastEditTime: 2022-11-07 10:49:16
  * @Description: Do not edit
  */
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
@@ -13,6 +13,8 @@ import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
 import { TagModule } from '@/modules/tag/tag.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommentModule } from './modules/comment/comment.module';
+import { UserModule } from './modules/user/user.module';
+import { FileModule } from './modules/file/file.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,17 +25,25 @@ import { CommentModule } from './modules/comment/comment.module';
       load: [], // 加载环境变量的工厂函数,用于自定义加载环境变量
       validationSchema: Joi.object({
         SERVER_LISTEN_PORT: Joi.number().default(8088),
+        SERVICE_BASE_URL: Joi.string().default(''),
         SWAGGER_SETUP_PATH: Joi.string().default('api-docs'),
         SWAGGER_ENDPOINT_PREFIX: Joi.string().default('blog/v1'),
         SWAGGER_UI_TITLE: Joi.string().default('Swagger文档标题'),
         SWAGGER_UI_DESCRIPTION: Joi.string().default('赶紧改相关配置啊~~'),
         SWAGGER_API_VERSION: Joi.string().default('1.0'),
-        NODE_ENV: Joi.string().valid('development', 'production', 'test'),
+        NODE_ENV: Joi.string().valid('dev', 'prod', 'test'),
         MONGO_HOST: Joi.string().default('localhost'),
         MONGO_PORT: Joi.number().default(27017),
         MONGO_USERNAME: Joi.string().default('root'),
         MONGO_PASSWORD: Joi.string().default('123456'),
         MONGO_DATABASE: Joi.string().default('blog-admin'),
+        OSS_ACCESS_KEY_ID: Joi.string().default(''),
+        OSS_ACCESS_KEY_SECRET: Joi.string().default(''),
+        OSS_BUCKET: Joi.string().default(''),
+        OSS_REGION: Joi.string().default(''),
+        OSS_DIR: Joi.string().default(''),
+        OSS_ENDPOINT: Joi.string().default(''),
+        OSS_CALLBACK_VERIFY_URL: Joi.string().default(''),
       }),
       validationOptions: {
         allowUnknown: false, // 控制是否允许环境变量中未知的键。默认为true。
@@ -50,6 +60,8 @@ import { CommentModule } from './modules/comment/comment.module';
     ArticleModule,
     TagModule,
     CommentModule,
+    UserModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],

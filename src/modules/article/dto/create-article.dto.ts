@@ -1,11 +1,12 @@
 /*
  * @Date: 2022-10-04 18:00:39
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 18:14:49
+ * @LastEditTime: 2022-11-06 14:23:41
  * @Description: 新增文章传输对象
  */
 import { ApiOperation, ApiProperty } from '@nestjs/swagger';
 import { IsString, IsDate, IsInt, IsBoolean, IsArray, IsNotEmpty } from 'class-validator';
+import { IsObjectId } from '@/common/decorator/validate-object-id';
 
 export class CreateArticleDto {
   @IsString()
@@ -24,15 +25,17 @@ export class CreateArticleDto {
   articleContent: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Article content cannot be empty' })
-  @ApiProperty({ description: '文章作者', default: 'mario' })
-  author: string;
+  @IsNotEmpty({ message: 'UserId content cannot be empty' })
+  @IsObjectId({ message: 'UserId is not a valid ObjectId' })
+  @ApiProperty({ description: '用户Id', default: 'mario' })
+  userId: string;
 
   @IsInt()
   @ApiProperty({ description: '文章是否删除', default: 1 })
   status: number;
 
   @IsArray()
+  @IsObjectId({ message: 'UserId is not a valid ObjectId', each: true })
   @ApiProperty({ description: '文章标签', default: [] })
   tags: string[];
 

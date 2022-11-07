@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-03 13:44:59
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-05 12:18:38
+ * @LastEditTime: 2022-11-04 08:53:58
  * @Description: 日志中间件
  */
 import { Injectable, NestMiddleware } from '@nestjs/common';

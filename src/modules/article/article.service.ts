@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 14:47:55
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 19:49:44
+ * @LastEditTime: 2022-11-07 12:56:10
  * @Description: 文章服务实现
  */
 import { HttpException, Injectable } from '@nestjs/common';
@@ -12,15 +12,18 @@ import { CommentDocument, Comment } from '@/modules/comment/entities/comment.ent
 import { CreateArticleDto } from '@/modules/article/dto/create-article.dto';
 import { UpdateArticleDto } from '@/modules/article/dto/update-article.dto';
 import { ResponseStatus } from '@/contacts/response-message';
-import { ArticleMessage } from '@/contacts/business-message';
+import { ArticleMessage, UserMessage } from '@/contacts/business-message';
 import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
 import { deleteObjEmptyValue, ToLine, toTree, treeToTwoFlatTree } from '@/utils';
+import { User, UserDocument } from '../user/entities/user.entity';
+import { ThrowError } from '@/contacts/throw-error';
 
 @Injectable()
 export class ArticleService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
   /**
@@ -30,19 +33,18 @@ export class ArticleService {
    */
   async createArticle(createArticleDto: CreateArticleDto) {
     try {
-      const createArticle = await this.articleModel.create(ToLine(createArticleDto));
+      // 先查询用户是否存在
+      const findUser = await this.userModel.findById(createArticleDto.userId);
+      if (!findUser) {
+        throw new Error(UserMessage.USER_NOT_FOUND);
+      }
+      await this.articleModel.create(ToLine(createArticleDto));
       return {
-        data: createArticle,
+        data: null,
         message: ArticleMessage.ARTICLE_CREATE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: ArticleMessage.ARTICLE_CREATE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(ArticleMessage.ARTICLE_CREATE_FAILED, error.message);
     }
   }
   /**
@@ -63,17 +65,11 @@ export class ArticleService {
         ...ToLine(updateArticleDto),
       });
       return {
-        message: ArticleMessage.ARTICLE_UPDATE_SUCCESS,
         data: null,
+        message: ArticleMessage.ARTICLE_UPDATE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: ArticleMessage.ARTICLE_UPDATE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(ArticleMessage.ARTICLE_UPDATE_FAILED, error.message);
     }
   }
   /**
@@ -103,13 +99,7 @@ export class ArticleService {
         total,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: ArticleMessage.ARTICLE_GET_LIST_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(ArticleMessage.ARTICLE_GET_LIST_FAILED, error.message);
     }
   }
   /**
@@ -167,13 +157,7 @@ export class ArticleService {
         message: ArticleMessage.ARTICLE_GET_DETAIL_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: ArticleMessage.ARTICLE_GET_DETAIL_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(ArticleMessage.ARTICLE_GET_DETAIL_FAILED, error.message);
     }
   }
   /**
@@ -194,13 +178,7 @@ export class ArticleService {
         message: ArticleMessage.ARTICLE_DELETE_SUCCESS,
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          message: ArticleMessage.ARTICLE_DELETE_FAILED,
-          error: error.message,
-        },
-        ResponseStatus.REQUEST_PARAMS_ERROR,
-      );
+      ThrowError(ArticleMessage.ARTICLE_DELETE_FAILED, error.message);
     }
   }
 }

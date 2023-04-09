@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-11-07 12:13:52
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-07 12:55:38
+ * @LastEditTime: 2023-04-08 16:06:41
  * @Description: Do not edit
  */
 import { HttpException } from '@nestjs/common';
@@ -12,7 +12,7 @@ import { ResponseStatus } from './response-message';
 const businessMessage = Object.values(BusinessMessage)
   .map((item) => Object.values(item))
   .flat();
-export const ThrowError = (message: string, error: any) => {
+export const ThrowError = (message: string, error: any, statusCode?: number) => {
   error = error.message ? error.message : error;
   // 如果是业务异常信息,
   if (businessMessage.includes(error)) {
@@ -26,10 +26,10 @@ export const ThrowError = (message: string, error: any) => {
   } else {
     throw new HttpException(
       {
-        message: BusinessMessage.ServiceMessage.INTERNAL_SERVER_ERROR,
+        message: message ? message : BusinessMessage.ServiceMessage.INTERNAL_SERVER_ERROR,
         error,
       },
-      ResponseStatus.INTERNAL_SERVER_ERROR,
+      statusCode ? statusCode : ResponseStatus.INTERNAL_SERVER_ERROR,
     );
   }
 };

@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-11-06 15:09:22
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-07 14:35:57
+ * @LastEditTime: 2022-11-12 15:17:36
  * @Description: Do not edit
  */
 import {
@@ -21,8 +21,9 @@ import { FileService } from './file.service';
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('文件')
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}

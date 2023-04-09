@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-31 16:10:17
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-07 14:31:00
+ * @LastEditTime: 2023-04-02 13:32:48
  * @Description: Do not edit
  */
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
@@ -16,11 +16,12 @@ import { ObjectIdPipe } from '@/common/pipes/object-id.pipe';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @ApiOperation({ summary: '获取文章列表' })
+  @ApiOperation({ summary: '创建评论' })
   @Post('/create')
   createComment(@Body() createCommentDto: CreateCommentDto) {
     return this.commentService.createComment(createCommentDto);
   }
+
   @ApiOperation({ summary: '获取评论列表' })
   @Get('/list')
   findCommentListById(@Query('id', ObjectIdPipe) id: string) {
@@ -35,5 +36,12 @@ export class CommentController {
   @Delete('/delete/:id')
   removeCommentById(@Param('id', ObjectIdPipe) id: string) {
     return this.commentService.removeCommentById(id);
+  }
+
+  // 获取热门评论
+  @ApiOperation({ summary: '获取热门评论' })
+  @Get('/hot')
+  findHotCommentList() {
+    return this.commentService.findHotCommentList();
   }
 }

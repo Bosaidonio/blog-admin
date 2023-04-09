@@ -1,9 +1,10 @@
 /*
  * @Date: 2022-10-31 16:10:17
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 17:25:25
+ * @LastEditTime: 2022-12-11 20:03:58
  * @Description: Do not edit
  */
+import { IsObjectId } from '@/common/decorator/validate-object-id';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 export class CreateCommentDto {
@@ -15,11 +16,13 @@ export class CreateCommentDto {
   @IsString()
   @IsNotEmpty({ message: 'User id cannot be empty' })
   @ApiProperty({ description: '用户ID', default: '' })
+  @IsObjectId({ message: '用户ID无效' })
   userId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'User id cannot be empty' })
+  @IsNotEmpty({ message: 'Article id cannot be empty' })
   @ApiProperty({ description: '文章ID', default: '' })
+  @IsObjectId({ message: '文章ID无效' })
   articleId: string;
 
   @IsString()

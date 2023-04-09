@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-06 16:06:13
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-07 12:21:35
+ * @LastEditTime: 2023-04-08 16:00:13
  * @Description: 错误信息
  */
 // 服务端错误
@@ -21,6 +21,10 @@ export const ArticleMessage = {
   ARTICLE_GET_LIST_FAILED: '获取文章列表失败',
   ARTICLE_GET_DETAIL_SUCCESS: '获取文章详情成功',
   ARTICLE_GET_DETAIL_FAILED: '获取文章详情失败',
+  ARTICLE_GET_HOT_FAILED: '获取热门文章失败',
+  ARTICLE_GET_HOT_SUCCESS: '获取热门文章成功',
+  ARTICLE_GET_RANDOM_SUCCESS: '获取随机文章成功',
+  ARTICLE_GET_RANDOM_FAILED: '获取随机文章失败',
 };
 // 标签响应信息
 export const TagMessage = {
@@ -72,4 +76,14 @@ export const UserMessage = {
   USER_REGISTER_SUCCESS: '用户注册成功',
   USER_REGISTER_FAILED: '用户注册失败',
   USER_PASSWORD_NOT_MATCH: '密码不匹配',
+};
+// 统计信息
+export const StatisticsMessage = {
+  BLOGINFO_GET_SUCCESS: '获取博客信息成功',
+  BLOGINFO_GET_FAILED: '获取博客信息失败',
+};
+// AI信息
+export const GptMessage = {
+  GPT_GENERATE_SUCCESS: 'AI生成成功',
+  GPT_GENERATE_FAILED: 'AI生成失败',
 };

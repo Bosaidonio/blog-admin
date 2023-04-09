@@ -1,12 +1,12 @@
 /*
  * @Date: 2022-10-31 16:10:17
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 18:14:39
+ * @LastEditTime: 2023-04-02 13:36:56
  * @Description: Do not edit
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { parseTime } from '@/utils/date';
-enum CommentStatus {
+export enum CommentStatus {
   // 未审核
   UNAUDITED = 0,
   // 审核通过

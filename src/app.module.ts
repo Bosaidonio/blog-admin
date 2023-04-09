@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 14:37:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-07 10:49:16
+ * @LastEditTime: 2023-04-05 17:36:42
  * @Description: Do not edit
  */
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
@@ -15,6 +15,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CommentModule } from './modules/comment/comment.module';
 import { UserModule } from './modules/user/user.module';
 import { FileModule } from './modules/file/file.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ChatGptModule } from './modules/chatgpt/chat-gpt.module';
+import { StatisticsModule } from './modules/statistics/statistics.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -44,6 +47,7 @@ import { FileModule } from './modules/file/file.module';
         OSS_DIR: Joi.string().default(''),
         OSS_ENDPOINT: Joi.string().default(''),
         OSS_CALLBACK_VERIFY_URL: Joi.string().default(''),
+        OPENAI_API_KEY: Joi.string().default(''),
       }),
       validationOptions: {
         allowUnknown: false, // 控制是否允许环境变量中未知的键。默认为true。
@@ -57,11 +61,14 @@ import { FileModule } from './modules/file/file.module';
         pass: process.env.MONGO_PASSWORD,
       },
     ),
+    AuthModule,
     ArticleModule,
     TagModule,
     CommentModule,
     UserModule,
     FileModule,
+    ChatGptModule,
+    StatisticsModule,
   ],
   controllers: [],
   providers: [],

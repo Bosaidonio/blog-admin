@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-09-25 14:37:03
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-07 11:54:53
+ * @LastEditTime: 2023-04-09 13:17:12
  * @Description: 主入口
  */
 import { NestFactory } from '@nestjs/core';
@@ -15,6 +15,7 @@ import { startLogger } from '@/utils/start-logger';
 import { ValidationPipe } from '@/common/pipes/validation.pipe';
 import { RouterMiddleware } from './common/middleware/router.middleware';
 import { checkServiceEnv } from '@/utils/check-service-env';
+import { INestApplication } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors();
@@ -34,12 +35,14 @@ async function bootstrap() {
     .setTitle(process.env.SWAGGER_UI_TITLE)
     .setDescription(process.env.SWAGGER_UI_DESCRIPTION)
     .setVersion(process.env.SWAGGER_API_VERSION)
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(process.env.SWAGGER_SETUP_PATH, app, document);
   await app.listen(process.env.SERVER_LISTEN_PORT);
   startLogger();
 }
+
 (async () => {
   const result = await checkServiceEnv();
   if (result) {

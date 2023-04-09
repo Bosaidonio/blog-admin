@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-11-06 10:11:50
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-06 10:37:24
+ * @LastEditTime: 2023-02-25 16:56:30
  * @Description: Do not edit
  */
 import { Module } from '@nestjs/common';

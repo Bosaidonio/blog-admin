@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-11-06 10:11:50
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-07 13:01:50
+ * @LastEditTime: 2022-11-16 16:59:41
  * @Description: Do not edit
  */
 import { UserMessage } from '@/contacts/business-message';
@@ -63,7 +63,7 @@ export class UserService {
       );
       const skip = (pageNow - 1) * pageSize;
       const total = await this.userModel.countDocuments();
-      const userList = await this.userModel.find(findParams, { _id: 0, password: 0 }).skip(skip).limit(pageSize);
+      const userList = await this.userModel.find(findParams, { password: 0 }).skip(skip).limit(pageSize);
       return {
         data: userList,
         pageNow,

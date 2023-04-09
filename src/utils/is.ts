@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-07 14:29:02
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-10-07 14:56:42
+ * @LastEditTime: 2023-04-03 14:37:27
  * @Description: 判断数据类型
  */
 const toString = Object.prototype.toString;

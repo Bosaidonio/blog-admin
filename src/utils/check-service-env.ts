@@ -1,3 +1,9 @@
+/*
+ * @Date: 2022-11-04 08:47:40
+ * @LastEditors: mario marioworker@163.com
+ * @LastEditTime: 2022-11-10 15:10:49
+ * @Description: Do not edit
+ */
 // 使用shelljs检查mongodb服务是否启动
 import * as shell from 'shelljs';
 import { factoryLogger } from '@/utils/logger';
@@ -6,6 +12,9 @@ import * as inquirer from 'inquirer';
 const logger = factoryLogger();
 
 export const checkServiceEnv = async () => {
+  // 使用shelljs获取HOME系统环境变量
+  const env = shell.env;
+
   // 检查mongodb是否安装
   const mongoStatus = shell.exec('mongod --version', { silent: true }).stdout;
   if (!mongoStatus) {

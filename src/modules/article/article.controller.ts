@@ -1,17 +1,18 @@
 /*
  * @Date: 2022-09-25 14:47:47
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-07 14:29:30
+ * @LastEditTime: 2023-04-02 17:46:01
  * @Description: 文章控制器
  */
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ArticleService } from '@/modules/article/article.service';
 import { CreateArticleDto } from '@/modules/article/dto/create-article.dto';
 import { UpdateArticleDto } from '@/modules/article/dto/update-article.dto';
 import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
 import { ParseIntPipe } from '@/common/pipes/parse-init.pipe';
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe';
+import { AuthGuard } from '@nestjs/passport';
 @ApiTags('文章')
 @Controller('article')
 export class ArticleController {
@@ -27,18 +28,24 @@ export class ArticleController {
   }
 
   @Post('/create')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @ApiOperation({ summary: '新增文章' })
   createArticle(@Body() createArticleDto: CreateArticleDto) {
     return this.ArticleService.createArticle(createArticleDto);
   }
 
   @Patch('/update/:id')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @ApiOperation({ summary: '更新文章' })
   updateArticle(@Param('id', ObjectIdPipe) id: string, @Body() updateArticleDto: UpdateArticleDto) {
     return this.ArticleService.updateArticle(id, updateArticleDto);
   }
 
   @Delete('/delete/:id')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @ApiOperation({ summary: '删除指定文章' })
   deleteArticleById(@Param('id', ObjectIdPipe) id: string) {
     return this.ArticleService.deleteArticleById(id);
@@ -48,5 +55,17 @@ export class ArticleController {
   @ApiOperation({ summary: '获取文章详情' })
   findArticleById(@Param('id', ObjectIdPipe) id: string) {
     return this.ArticleService.findArticleById(id);
+  }
+
+  @Get('/hot')
+  @ApiOperation({ summary: '获取热门文章' })
+  findHotArticle() {
+    return this.ArticleService.findHotArticle();
+  }
+
+  @Get('/random')
+  @ApiOperation({ summary: '获取随机文章' })
+  findRandomArticle() {
+    return this.ArticleService.findRandomArticle();
   }
 }

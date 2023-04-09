@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-04 10:47:49
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 14:31:02
+ * @LastEditTime: 2023-04-08 15:37:22
  * @Description: 常用工具函数
  */
 
@@ -17,6 +17,7 @@ export function toHump(name: string) {
     return letter.toUpperCase();
   });
 }
+
 /**
  * @description: 将对象的key转换成驼峰
  * @param {any} obj 传入的对象
@@ -27,11 +28,9 @@ export const toHumpObj = (obj: any, whiteKeys: string[] = []) => {
   const newObj: any = {};
   Object.keys(obj).forEach((key) => {
     if (whiteKeys.includes(key)) {
-      newObj[key] =
-        obj[key] instanceof Array ? toHumpArray(obj[key], whiteKeys) : obj[key];
+      newObj[key] = obj[key] instanceof Array ? toHumpArray(obj[key], whiteKeys) : obj[key];
     } else {
-      newObj[toHump(key)] =
-        obj[key] instanceof Array ? toHumpArray(obj[key], whiteKeys) : obj[key];
+      newObj[toHump(key)] = obj[key] instanceof Array ? toHumpArray(obj[key], whiteKeys) : obj[key];
     }
   });
   return newObj;
@@ -45,9 +44,7 @@ export const toHumpObj = (obj: any, whiteKeys: string[] = []) => {
 export const toHumpArray = (arr: any[], whiteKeys: string[] = []) => {
   return arr.map((item) => {
     if (typeof item === 'object') {
-      return item instanceof Array
-        ? toHumpArray(item, whiteKeys)
-        : toHumpObj(item, whiteKeys);
+      return item instanceof Array ? toHumpArray(item, whiteKeys) : toHumpObj(item, whiteKeys);
     } else {
       return item;
     }
@@ -72,11 +69,9 @@ export const toLineObj = (obj: any, whiteKeys: string[] = []) => {
   const newObj: any = {};
   Object.keys(obj).forEach((key) => {
     if (whiteKeys.includes(key)) {
-      newObj[key] =
-        obj[key] instanceof Array ? toLineArray(obj[key], whiteKeys) : obj[key];
+      newObj[key] = obj[key] instanceof Array ? toLineArray(obj[key], whiteKeys) : obj[key];
     } else {
-      newObj[toLine(key)] =
-        obj[key] instanceof Array ? toLineArray(obj[key], whiteKeys) : obj[key];
+      newObj[toLine(key)] = obj[key] instanceof Array ? toLineArray(obj[key], whiteKeys) : obj[key];
     }
   });
   return newObj;
@@ -90,9 +85,7 @@ export const toLineObj = (obj: any, whiteKeys: string[] = []) => {
 export const toLineArray = (arr: any[], whiteKeys: string[] = []) => {
   return arr.map((item) => {
     if (typeof item === 'object') {
-      return item instanceof Array
-        ? toLineArray(item, whiteKeys)
-        : toLineObj(item, whiteKeys);
+      return item instanceof Array ? toLineArray(item, whiteKeys) : toLineObj(item, whiteKeys);
     } else {
       return item;
     }
@@ -105,9 +98,7 @@ export const toLineArray = (arr: any[], whiteKeys: string[] = []) => {
  * @return {any}
  */
 export const ToLine = (params, whiteKeys: string[] = []) => {
-  return params instanceof Array
-    ? toLineArray(params, whiteKeys)
-    : toLineObj(params, whiteKeys);
+  return params instanceof Array ? toLineArray(params, whiteKeys) : toLineObj(params, whiteKeys);
 };
 /**
  * @description: 下划线转换成驼峰
@@ -116,9 +107,7 @@ export const ToLine = (params, whiteKeys: string[] = []) => {
  * @return {any}
  */
 export const ToHump = (params, whiteKeys: string[] = []) => {
-  return params instanceof Array
-    ? toHumpArray(params, whiteKeys)
-    : toHumpObj(params, whiteKeys);
+  return params instanceof Array ? toHumpArray(params, whiteKeys) : toHumpObj(params, whiteKeys);
 };
 /**
  * @description: 将对象中的值转换成数字
@@ -137,10 +126,7 @@ export const stringToNumberObject = (obj: any, transformKeys: string[]) => {
           ? obj[key]
           : Number(obj[key]);
     } else {
-      newObj[key] =
-        obj[key] instanceof Array
-          ? stringToNumberArray(obj[key], transformKeys)
-          : obj[key];
+      newObj[key] = obj[key] instanceof Array ? stringToNumberArray(obj[key], transformKeys) : obj[key];
     }
   });
   return newObj;
@@ -175,10 +161,7 @@ export const stringToNumberArray = (arr: any[], transformKeys: string[]) => {
  * deleteEmptyValue({a: 1, b: '', c: null, d: undefined, e: 0})
  * 转换结果 => {a: 1, e: 0}
  */
-export const deleteObjEmptyValue = (
-  obj: Record<string, any>,
-  values: Record<string, any>,
-) => {
+export const deleteObjEmptyValue = (obj: Record<string, any>, values: Record<string, any>) => {
   const newObj: Record<string, any> = {};
   Object.keys(obj).forEach((key) => {
     if (IsNotEmpty(values[key])) {
@@ -280,12 +263,7 @@ export const getTopParent = (data: any[], id = 'id', pid = 'pid') => {
  * 调用方法 => treeToTwoFlatTree(data, 'id', 'pid')
  * 返回结果 => [ { id: 1, pid: 0, children: [{ id: 2, pid: 1 }, { id: 3, pid: 2 }] } ]
  */
-export const treeToTwoFlatTree = (
-  data: any[],
-  id = 'id',
-  pid = 'pid',
-  rootNodeIdName = 'rootNodeId',
-) => {
+export const treeToTwoFlatTree = (data: any[], id = 'id', pid = 'pid', rootNodeIdName = 'rootNodeId') => {
   const transformData = data.map((item) => {
     const topParent = getTopParent(data, id, pid)(item[id]);
     return {
@@ -295,3 +273,46 @@ export const treeToTwoFlatTree = (
   });
   return toTree(transformData, id, rootNodeIdName);
 };
+// 将对象中的_id转换成id
+export const transformId = (obj: Record<string, any>) => {
+  const newObj = { ...obj };
+  if (newObj._id) {
+    newObj.id = newObj._id;
+    delete newObj._id;
+  }
+  return newObj;
+};
+/**
+ * @description 将数组中所有对象的 _id 属性转换为 id 属性。
+ * @param {any[]} arr 需要转换的数组。
+ * @returns {any[]} 返回一个包含相同元素但所有对象的 _id 属性已转换为 id 属性的新数组。
+ */
+export const transformIdInArray = (arr: any[]) => {
+  return arr.map((item) => {
+    if (item instanceof Array) {
+      return transformIdInArray(item);
+    } else if (item instanceof Object) {
+      return transformId(item);
+    } else {
+      return item;
+    }
+  });
+};
+
+/**
+ * @description 使用 Fisher-Yates 算法对数组进行洗牌。
+ * @template T 数组元素的类型。
+ * @param {T[]} array 需要洗牌的输入数组。
+ * @returns {T[]} 一个新的包含输入数组相同元素的洗牌后的数组。
+ */
+
+export const shuffle = <T>(array: T[]): T[] => {
+  const newArray: T[] = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
+

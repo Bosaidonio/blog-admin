@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-06 16:38:52
  * @LastEditors: mario marioworker@163.com
- * @LastEditTime: 2022-11-03 09:59:27
+ * @LastEditTime: 2023-04-09 13:04:21
  * @Description: 路由中间件
  */
 
@@ -14,10 +14,7 @@ import { responseMessage, ResponseStatus } from '@/contacts/response-message';
 export function RouterMiddleware(app: INestApplication) {
   return (req: Request, res: Response, next: NextFunction) => {
     // 1、放行OPTIONS请求和所有不是SWAGGER_ENDPOINT_PREFIX值开头的请求
-    if (
-      req.method === 'OPTIONS' ||
-      req.url.indexOf(process.env.SWAGGER_ENDPOINT_PREFIX) === -1
-    ) {
+    if (req.method === 'OPTIONS' || req.url.indexOf(process.env.SWAGGER_ENDPOINT_PREFIX) === -1) {
       return next();
     }
 
@@ -26,8 +23,7 @@ export function RouterMiddleware(app: INestApplication) {
     const route = routes.find((route) => {
       const reg = pathToRegexp(route.path);
       // 如果是Get请求，需要去掉携带的参数再匹配
-      const validateUrl =
-        req.method.toUpperCase() === 'GET' ? req.url.split('?')[0] : req.url;
+      const validateUrl = req.method.toUpperCase() === 'GET' ? req.url.split('?')[0] : req.url;
       return reg.test(validateUrl);
     });
 
@@ -43,18 +39,16 @@ export function RouterMiddleware(app: INestApplication) {
     // 3、判断当前请求的方法和地址是否和路由表中的一致;
     const isExist = routes.some((route) => {
       const reg = pathToRegexp(route.path);
-      const validateUrl =
-        req.method.toUpperCase() === 'GET' ? req.url.split('?')[0] : req.url;
-      return (
-        reg.test(validateUrl) &&
-        route.method.toLocaleUpperCase() === req.method.toLocaleUpperCase()
-      );
+      const validateUrl = req.method.toUpperCase() === 'GET' ? req.url.split('?')[0] : req.url;
+      return reg.test(validateUrl) && route.method.toLocaleUpperCase() === req.method.toLocaleUpperCase();
     });
 
     if (!isExist) {
       throw new HttpException(
         {
-          message: `The request method is "${req.method}", but the expected request method is "${route.method}"`,
+          message: `The request method is "${
+            req.method
+          }", but the expected request method is "${route.method.toUpperCase()}"`,
           error: 'Method Not Allowed',
         },
         ResponseStatus.METHOD_NOT_ALLOWED,
